@@ -20,6 +20,8 @@ var ChainId
   ChainId[(ChainId['RINKEBY'] = 4)] = 'RINKEBY'
   ChainId[(ChainId['G\xD6RLI'] = 5)] = 'G\xD6RLI'
   ChainId[(ChainId['KOVAN'] = 42)] = 'KOVAN'
+  ChainId[(ChainId['BSC_MAIN_NET'] = 56)] = 'BSC_MAIN_NET'
+  ChainId[(ChainId['BSC_TEST_NET'] = 97)] = 'BSC_TEST_NET'
 })(ChainId || (ChainId = {}))
 
 var TradeType
@@ -35,7 +37,7 @@ var Rounding
   Rounding[(Rounding['ROUND_UP'] = 2)] = 'ROUND_UP'
 })(Rounding || (Rounding = {}))
 
-var FACTORY_ADDRESS = '0xb43DD1c50377b6dbaEBa3DcBB2232a3964b22440'
+var FACTORY_ADDRESS = '0x89D20aB13D093Eecea6C5af0a22566d4e780892A'
 var INIT_CODE_HASH = '0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8'
 var MINIMUM_LIQUIDITY = /*#__PURE__*/ JSBI.BigInt(1000) // exports for internal consumption
 
@@ -522,6 +524,20 @@ var WETH =
   (_WETH[ChainId.KOVAN] = /*#__PURE__*/ new Token(
     ChainId.KOVAN,
     '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
+    18,
+    'WETH',
+    'Wrapped Ether'
+  )),
+  (_WETH[ChainId.BSC_MAIN_NET] = /*#__PURE__*/ new Token(
+    ChainId.BSC_MAIN_NET,
+    '0xaE8E19eFB41e7b96815649A6a60785e1fbA84C1e',
+    18,
+    'WETH',
+    'Wrapped Ether'
+  )),
+  (_WETH[ChainId.BSC_TEST_NET] = /*#__PURE__*/ new Token(
+    ChainId.BSC_TEST_NET,
+    '0xaE8E19eFB41e7b96815649A6a60785e1fbA84C1e',
     18,
     'WETH',
     'Wrapped Ether'

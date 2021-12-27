@@ -11,6 +11,7 @@ import { Contract } from '@ethersproject/contracts'
 import { getNetwork } from '@ethersproject/networks'
 import { getDefaultProvider } from '@ethersproject/providers'
 import IUniswapV2Pair from '@acyswap/v1-core/build/IUniswapV2Pair.json'
+import ConstantLoader from "@/constants/index.js"
 
 var _SOLIDITY_TYPE_MAXIMA
 var ChainId
@@ -37,8 +38,8 @@ var Rounding
   Rounding[(Rounding['ROUND_UP'] = 2)] = 'ROUND_UP'
 })(Rounding || (Rounding = {}))
 
-var FACTORY_ADDRESS = '0x3d077c05c3AbCE52257E453607209f81D9db01fC'
-var INIT_CODE_HASH = '0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8'
+var FACTORY_ADDRESS = ConstantLoader().farmSetting.FACTORY_ADDRESS
+var INIT_CODE_HASH = ConstantLoader().farmSetting.INIT_CODE_HASH
 var MINIMUM_LIQUIDITY = /*#__PURE__*/ JSBI.BigInt(1000) // exports for internal consumption
 
 var ZERO = /*#__PURE__*/ JSBI.BigInt(0)
@@ -530,14 +531,14 @@ var WETH =
   )),
   (_WETH[ChainId.BSC_MAIN_NET] = /*#__PURE__*/ new Token(
     ChainId.BSC_MAIN_NET,
-    '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+    ConstantLoader().farmSetting.WETH,
     18,
     'WETH',
     'Wrapped Ether'
   )),
   (_WETH[ChainId.BSC_TEST_NET] = /*#__PURE__*/ new Token(
     ChainId.BSC_TEST_NET,
-    '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd',
+    ConstantLoader().farmSetting.WETH,
     18,
     'WETH',
     'Wrapped Ether'

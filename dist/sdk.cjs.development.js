@@ -893,7 +893,7 @@ var Price = /*#__PURE__*/ (function (_Fraction) {
 
 var PAIR_ADDRESS_CACHE = {}
 var Pair = /*#__PURE__*/ (function () {
-  function Pair(tokenAmountA, tokenAmountB, chainId) {
+  function Pair(tokenAmountA, tokenAmountB, chainId = 56) {
     var tokenAmounts = tokenAmountA.token.sortsBefore(tokenAmountB.token) // does safety checks
       ? [tokenAmountA, tokenAmountB]
       : [tokenAmountB, tokenAmountA]
@@ -907,7 +907,7 @@ var Pair = /*#__PURE__*/ (function () {
     this.tokenAmounts = tokenAmounts
   }
 
-  Pair.getAddress = function getAddress(tokenA, tokenB, chainId) {
+  Pair.getAddress = function getAddress(tokenA, tokenB, chainId = 56) {
     var _PAIR_ADDRESS_CACHE, _PAIR_ADDRESS_CACHE$t
 
     var tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
@@ -978,7 +978,7 @@ var Pair = /*#__PURE__*/ (function () {
     return token.equals(this.token0) ? this.reserve0 : this.reserve1
   }
 
-  _proto.getOutputAmount = function getOutputAmount(inputAmount, chainId) {
+  _proto.getOutputAmount = function getOutputAmount(inputAmount, chainId = 56) {
     !this.involvesToken(inputAmount.token) ? invariant(false, 'TOKEN') : void 0
 
     if (JSBI.equal(this.reserve0.raw, ZERO) || JSBI.equal(this.reserve1.raw, ZERO)) {
@@ -1002,7 +1002,7 @@ var Pair = /*#__PURE__*/ (function () {
     return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), chainId)]
   }
 
-  _proto.getInputAmount = function getInputAmount(outputAmount, chainId) {
+  _proto.getInputAmount = function getInputAmount(outputAmount, chainId = 56) {
     !this.involvesToken(outputAmount.token) ? invariant(false, 'TOKEN') : void 0
 
     if (

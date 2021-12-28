@@ -1055,7 +1055,7 @@ var Pair = /*#__PURE__*/ (function () {
     return token.equals(this.token0) ? this.reserve0 : this.reserve1
   }
 
-  _proto.getOutputAmount = function getOutputAmount(inputAmount, chainId) {
+  _proto.getOutputAmount = function getOutputAmount(inputAmount, chainId = 56) {
     !this.involvesToken(inputAmount.token)
       ? process.env.NODE_ENV !== 'production'
         ? invariant(false, 'TOKEN')
@@ -1083,7 +1083,7 @@ var Pair = /*#__PURE__*/ (function () {
     return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), chainId)]
   }
 
-  _proto.getInputAmount = function getInputAmount(outputAmount, chainId) {
+  _proto.getInputAmount = function getInputAmount(outputAmount, chainId = 56) {
     !this.involvesToken(outputAmount.token)
       ? process.env.NODE_ENV !== 'production'
         ? invariant(false, 'TOKEN')
@@ -1431,7 +1431,7 @@ function wrappedCurrency(currency, chainId) {
  */
 
 var Trade = /*#__PURE__*/ (function () {
-  function Trade(route, amount, tradeType, chainId) {
+  function Trade(route, amount, tradeType, chainId = 56) {
     var amounts = new Array(route.path.length)
     var nextPairs = new Array(route.pairs.length)
 
@@ -2024,7 +2024,7 @@ var Fetcher = /*#__PURE__*/ (function () {
    * @param provider the provider to use to fetch the data
    */
 
-  Fetcher.fetchPairData = function fetchPairData(tokenA, tokenB, provider, chainId) {
+  Fetcher.fetchPairData = function fetchPairData(tokenA, tokenB, provider, chainId = 56) {
     try {
       if (provider === undefined) provider = getDefaultProvider(getNetwork(tokenA.chainId))
       !(tokenA.chainId === tokenB.chainId)

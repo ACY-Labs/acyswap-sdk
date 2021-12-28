@@ -28,6 +28,7 @@ var _SOLIDITY_TYPE_MAXIMA
   ChainId[(ChainId['KOVAN'] = 42)] = 'KOVAN'
   ChainId[(ChainId['BSC_MAIN_NET'] = 56)] = 'BSC_MAIN_NET'
   ChainId[(ChainId['BSC_TEST_NET'] = 97)] = 'BSC_TEST_NET'
+  ChainId[(ChainId['POLYGON'] = 137)] = 'POLYGON'
 })(exports.ChainId || (exports.ChainId = {}))
 ;(function (TradeType) {
   TradeType[(TradeType['EXACT_INPUT'] = 0)] = 'EXACT_INPUT'
@@ -39,8 +40,8 @@ var _SOLIDITY_TYPE_MAXIMA
   Rounding[(Rounding['ROUND_UP'] = 2)] = 'ROUND_UP'
 })(exports.Rounding || (exports.Rounding = {}))
 
-var FACTORY_ADDRESS = '0x3d077c05c3AbCE52257E453607209f81D9db01fC'
-var INIT_CODE_HASH = '0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8'
+var FACTORY_ADDRESS = require('./sdkConstants')
+var INIT_CODE_HASH = require('./sdkConstants')
 var MINIMUM_LIQUIDITY = /*#__PURE__*/ JSBI.BigInt(1000) // exports for internal consumption
 
 var ZERO = /*#__PURE__*/ JSBI.BigInt(0)
@@ -892,13 +893,13 @@ var Price = /*#__PURE__*/ (function (_Fraction) {
 
 var PAIR_ADDRESS_CACHE = {}
 var Pair = /*#__PURE__*/ (function () {
-  function Pair(tokenAmountA, tokenAmountB) {
+  function Pair(tokenAmountA, tokenAmountB, chainId) {
     var tokenAmounts = tokenAmountA.token.sortsBefore(tokenAmountB.token) // does safety checks
       ? [tokenAmountA, tokenAmountB]
       : [tokenAmountB, tokenAmountA]
     this.liquidityToken = new Token(
       tokenAmounts[0].token.chainId,
-      Pair.getAddress(tokenAmounts[0].token, tokenAmounts[1].token),
+      Pair.getAddress(tokenAmounts[0].token, tokenAmounts[1].token, chainId),
       18,
       'UNI-V2',
       'Uniswap V2'
@@ -906,7 +907,7 @@ var Pair = /*#__PURE__*/ (function () {
     this.tokenAmounts = tokenAmounts
   }
 
-  Pair.getAddress = function getAddress(tokenA, tokenB) {
+  Pair.getAddress = function getAddress(tokenA, tokenB, chainId) {
     var _PAIR_ADDRESS_CACHE, _PAIR_ADDRESS_CACHE$t
 
     var tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
@@ -931,12 +932,12 @@ var Pair = /*#__PURE__*/ (function () {
             : _PAIR_ADDRESS_CACHE2[tokens[0].address],
           ((_extends2 = {}),
           (_extends2[tokens[1].address] = address.getCreate2Address(
-            FACTORY_ADDRESS,
+            FACTORY_ADDRESS[chainId],
             solidity.keccak256(
               ['bytes'],
               [solidity.pack(['address', 'address'], [tokens[0].address, tokens[1].address])]
             ),
-            INIT_CODE_HASH
+            INIT_CODE_HASH[chainId]
           )),
           _extends2)
         )),
@@ -977,7 +978,7 @@ var Pair = /*#__PURE__*/ (function () {
     return token.equals(this.token0) ? this.reserve0 : this.reserve1
   }
 
-  _proto.getOutputAmount = function getOutputAmount(inputAmount) {
+  _proto.getOutputAmount = function getOutputAmount(inputAmount, chainId) {
     !this.involvesToken(inputAmount.token) ? invariant(false, 'TOKEN') : void 0
 
     if (JSBI.equal(this.reserve0.raw, ZERO) || JSBI.equal(this.reserve1.raw, ZERO)) {
@@ -998,10 +999,10 @@ var Pair = /*#__PURE__*/ (function () {
       throw new InsufficientInputAmountError()
     }
 
-    return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))]
+    return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), chainId)]
   }
 
-  _proto.getInputAmount = function getInputAmount(outputAmount) {
+  _proto.getInputAmount = function getInputAmount(outputAmount, chainId) {
     !this.involvesToken(outputAmount.token) ? invariant(false, 'TOKEN') : void 0
 
     if (
@@ -1020,7 +1021,7 @@ var Pair = /*#__PURE__*/ (function () {
       outputAmount.token.equals(this.token0) ? this.token1 : this.token0,
       JSBI.add(JSBI.divide(numerator, denominator), ONE)
     )
-    return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))]
+    return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), chainId)]
   }
 
   _proto.getLiquidityMinted = function getLiquidityMinted(totalSupply, tokenAmountA, tokenAmountB) {
@@ -1301,7 +1302,7 @@ function wrappedCurrency(currency, chainId) {
  */
 
 var Trade = /*#__PURE__*/ (function () {
-  function Trade(route, amount, tradeType) {
+  function Trade(route, amount, tradeType, chainId) {
     var amounts = new Array(route.path.length)
     var nextPairs = new Array(route.pairs.length)
 
@@ -1312,7 +1313,7 @@ var Trade = /*#__PURE__*/ (function () {
       for (var i = 0; i < route.path.length - 1; i++) {
         var pair = route.pairs[i]
 
-        var _pair$getOutputAmount = pair.getOutputAmount(amounts[i]),
+        var _pair$getOutputAmount = pair.getOutputAmount(amounts[i], chainId),
           outputAmount = _pair$getOutputAmount[0],
           nextPair = _pair$getOutputAmount[1]
 
@@ -1326,7 +1327,7 @@ var Trade = /*#__PURE__*/ (function () {
       for (var _i = route.path.length - 1; _i > 0; _i--) {
         var _pair = route.pairs[_i - 1]
 
-        var _pair$getInputAmount = _pair.getInputAmount(amounts[_i]),
+        var _pair$getInputAmount = _pair.getInputAmount(amounts[_i], chainId),
           inputAmount = _pair$getInputAmount[0],
           _nextPair = _pair$getInputAmount[1]
 
@@ -1478,7 +1479,7 @@ var Trade = /*#__PURE__*/ (function () {
       var amountOut = void 0
 
       try {
-        var _pair$getOutputAmount2 = pair.getOutputAmount(amountIn)
+        var _pair$getOutputAmount2 = pair.getOutputAmount(amountIn, chainId)
 
         amountOut = _pair$getOutputAmount2[0]
       } catch (error) {
@@ -1587,7 +1588,7 @@ var Trade = /*#__PURE__*/ (function () {
       var amountIn = void 0
 
       try {
-        var _pair$getInputAmount2 = pair.getInputAmount(amountOut)
+        var _pair$getInputAmount2 = pair.getInputAmount(amountOut, chainId)
 
         amountIn = _pair$getInputAmount2[0]
       } catch (error) {
@@ -1852,7 +1853,7 @@ var Fetcher = /*#__PURE__*/ (function () {
           ? invariant(false, 'CHAIN_ID')
           : invariant(false)
         : void 0
-      var address = Pair.getAddress(tokenA, tokenB)
+      var address = Pair.getAddress(tokenA, tokenB, chainId)
       return Promise.resolve(new contracts.Contract(address, IUniswapV2Pair.abi, provider).getReserves()).then(
         function (_ref) {
           var reserves0 = _ref[0],

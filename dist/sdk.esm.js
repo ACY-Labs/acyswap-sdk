@@ -11,6 +11,7 @@ import { Contract } from '@ethersproject/contracts'
 import { getNetwork } from '@ethersproject/networks'
 import { getDefaultProvider } from '@ethersproject/providers'
 import IUniswapV2Pair from '@acyswap/v1-core/build/IUniswapV2Pair.json'
+import {FACTORY_ADDRESS, INIT_CODE_HASH} from './sdkConstants';
 
 var _SOLIDITY_TYPE_MAXIMA
 var ChainId
@@ -22,6 +23,7 @@ var ChainId
   ChainId[(ChainId['KOVAN'] = 42)] = 'KOVAN'
   ChainId[(ChainId['BSC_MAIN_NET'] = 56)] = 'BSC_MAIN_NET'
   ChainId[(ChainId['BSC_TEST_NET'] = 97)] = 'BSC_TEST_NET'
+  ChainId[(ChainId['POLYGON'] = 137)] = 'POLYGON'
 })(ChainId || (ChainId = {}))
 
 var TradeType
@@ -37,8 +39,8 @@ var Rounding
   Rounding[(Rounding['ROUND_UP'] = 2)] = 'ROUND_UP'
 })(Rounding || (Rounding = {}))
 
-var FACTORY_ADDRESS = '0x3d077c05c3AbCE52257E453607209f81D9db01fC'
-var INIT_CODE_HASH = '0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8'
+// var FACTORY_ADDRESS = ConstantLoader().sdkSetting.FACTORY_ADDRESS;
+// var INIT_CODE_HASH = ConstantLoader().sdkSetting.INIT_CODE_HASH;
 var MINIMUM_LIQUIDITY = /*#__PURE__*/ JSBI.BigInt(1000) // exports for internal consumption
 
 var ZERO = /*#__PURE__*/ JSBI.BigInt(0)
@@ -542,6 +544,13 @@ var WETH =
     'WETH',
     'Wrapped Ether'
   )),
+  (_WETH[ChainId.POLYGON] = /*#__PURE__*/ new Token(
+    ChainId.POLYGON,
+    '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+    137,
+    'WETH',
+    'Wrapped Ether'
+  )),
   _WETH)
 
 var _toSignificantRoundin, _toFixedRounding
@@ -956,13 +965,13 @@ var Price = /*#__PURE__*/ (function (_Fraction) {
 
 var PAIR_ADDRESS_CACHE = {}
 var Pair = /*#__PURE__*/ (function () {
-  function Pair(tokenAmountA, tokenAmountB) {
+  function Pair(tokenAmountA, tokenAmountB, chainId = 56) {
     var tokenAmounts = tokenAmountA.token.sortsBefore(tokenAmountB.token) // does safety checks
       ? [tokenAmountA, tokenAmountB]
       : [tokenAmountB, tokenAmountA]
     this.liquidityToken = new Token(
       tokenAmounts[0].token.chainId,
-      Pair.getAddress(tokenAmounts[0].token, tokenAmounts[1].token),
+      Pair.getAddress(tokenAmounts[0].token, tokenAmounts[1].token, chainId),
       18,
       'UNI-V2',
       'Uniswap V2'
@@ -970,7 +979,7 @@ var Pair = /*#__PURE__*/ (function () {
     this.tokenAmounts = tokenAmounts
   }
 
-  Pair.getAddress = function getAddress(tokenA, tokenB) {
+  Pair.getAddress = function getAddress(tokenA, tokenB, chainId = 56) {
     var _PAIR_ADDRESS_CACHE, _PAIR_ADDRESS_CACHE$t
 
     var tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
@@ -995,9 +1004,9 @@ var Pair = /*#__PURE__*/ (function () {
             : _PAIR_ADDRESS_CACHE2[tokens[0].address],
           ((_extends2 = {}),
           (_extends2[tokens[1].address] = getCreate2Address(
-            FACTORY_ADDRESS,
+            FACTORY_ADDRESS[chainId],
             keccak256(['bytes'], [pack(['address', 'address'], [tokens[0].address, tokens[1].address])]),
-            INIT_CODE_HASH
+            INIT_CODE_HASH[chainId]
           )),
           _extends2)
         )),
@@ -1046,7 +1055,7 @@ var Pair = /*#__PURE__*/ (function () {
     return token.equals(this.token0) ? this.reserve0 : this.reserve1
   }
 
-  _proto.getOutputAmount = function getOutputAmount(inputAmount) {
+  _proto.getOutputAmount = function getOutputAmount(inputAmount, chainId) {
     !this.involvesToken(inputAmount.token)
       ? process.env.NODE_ENV !== 'production'
         ? invariant(false, 'TOKEN')
@@ -1071,10 +1080,10 @@ var Pair = /*#__PURE__*/ (function () {
       throw new InsufficientInputAmountError()
     }
 
-    return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))]
+    return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), chainId)]
   }
 
-  _proto.getInputAmount = function getInputAmount(outputAmount) {
+  _proto.getInputAmount = function getInputAmount(outputAmount, chainId) {
     !this.involvesToken(outputAmount.token)
       ? process.env.NODE_ENV !== 'production'
         ? invariant(false, 'TOKEN')
@@ -1097,7 +1106,7 @@ var Pair = /*#__PURE__*/ (function () {
       outputAmount.token.equals(this.token0) ? this.token1 : this.token0,
       JSBI.add(JSBI.divide(numerator, denominator), ONE)
     )
-    return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))]
+    return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), chainId)]
   }
 
   _proto.getLiquidityMinted = function getLiquidityMinted(totalSupply, tokenAmountA, tokenAmountB) {
@@ -1422,7 +1431,7 @@ function wrappedCurrency(currency, chainId) {
  */
 
 var Trade = /*#__PURE__*/ (function () {
-  function Trade(route, amount, tradeType) {
+  function Trade(route, amount, tradeType, chainId) {
     var amounts = new Array(route.path.length)
     var nextPairs = new Array(route.pairs.length)
 
@@ -1437,7 +1446,7 @@ var Trade = /*#__PURE__*/ (function () {
       for (var i = 0; i < route.path.length - 1; i++) {
         var pair = route.pairs[i]
 
-        var _pair$getOutputAmount = pair.getOutputAmount(amounts[i]),
+        var _pair$getOutputAmount = pair.getOutputAmount(amounts[i], chainId),
           outputAmount = _pair$getOutputAmount[0],
           nextPair = _pair$getOutputAmount[1]
 
@@ -1455,7 +1464,7 @@ var Trade = /*#__PURE__*/ (function () {
       for (var _i = route.path.length - 1; _i > 0; _i--) {
         var _pair = route.pairs[_i - 1]
 
-        var _pair$getInputAmount = _pair.getInputAmount(amounts[_i]),
+        var _pair$getInputAmount = _pair.getInputAmount(amounts[_i], chainId),
           inputAmount = _pair$getInputAmount[0],
           _nextPair = _pair$getInputAmount[1]
 
@@ -1627,7 +1636,7 @@ var Trade = /*#__PURE__*/ (function () {
       var amountOut = void 0
 
       try {
-        var _pair$getOutputAmount2 = pair.getOutputAmount(amountIn)
+        var _pair$getOutputAmount2 = pair.getOutputAmount(amountIn, chainId)
 
         amountOut = _pair$getOutputAmount2[0]
       } catch (error) {
@@ -1746,7 +1755,7 @@ var Trade = /*#__PURE__*/ (function () {
       var amountIn = void 0
 
       try {
-        var _pair$getInputAmount2 = pair.getInputAmount(amountOut)
+        var _pair$getInputAmount2 = pair.getInputAmount(amountOut, chainId)
 
         amountIn = _pair$getInputAmount2[0]
       } catch (error) {
@@ -2015,7 +2024,7 @@ var Fetcher = /*#__PURE__*/ (function () {
    * @param provider the provider to use to fetch the data
    */
 
-  Fetcher.fetchPairData = function fetchPairData(tokenA, tokenB, provider) {
+  Fetcher.fetchPairData = function fetchPairData(tokenA, tokenB, provider, chainId) {
     try {
       if (provider === undefined) provider = getDefaultProvider(getNetwork(tokenA.chainId))
       !(tokenA.chainId === tokenB.chainId)
@@ -2023,12 +2032,12 @@ var Fetcher = /*#__PURE__*/ (function () {
           ? invariant(false, 'CHAIN_ID')
           : invariant(false)
         : void 0
-      var address = Pair.getAddress(tokenA, tokenB)
+      var address = Pair.getAddress(tokenA, tokenB, chainId)
       return Promise.resolve(new Contract(address, IUniswapV2Pair.abi, provider).getReserves()).then(function (_ref) {
         var reserves0 = _ref[0],
           reserves1 = _ref[1]
         var balances = tokenA.sortsBefore(tokenB) ? [reserves0, reserves1] : [reserves1, reserves0]
-        return new Pair(new TokenAmount(tokenA, balances[0]), new TokenAmount(tokenB, balances[1]))
+        return new Pair(new TokenAmount(tokenA, balances[0]), new TokenAmount(tokenB, balances[1]), chainId)
       })
     } catch (e) {
       return Promise.reject(e)

@@ -11,7 +11,6 @@ import { Contract } from '@ethersproject/contracts'
 import { getNetwork } from '@ethersproject/networks'
 import { getDefaultProvider } from '@ethersproject/providers'
 import IUniswapV2Pair from '@acyswap/v1-core/build/IUniswapV2Pair.json'
-import {FACTORY_ADDRESS, INIT_CODE_HASH} from './sdkConstants';
 
 var _SOLIDITY_TYPE_MAXIMA
 var ChainId
@@ -39,8 +38,16 @@ var Rounding
   Rounding[(Rounding['ROUND_UP'] = 2)] = 'ROUND_UP'
 })(Rounding || (Rounding = {}))
 
-// var FACTORY_ADDRESS = ConstantLoader().sdkSetting.FACTORY_ADDRESS;
-// var INIT_CODE_HASH = ConstantLoader().sdkSetting.INIT_CODE_HASH;
+var FACTORY_ADDRESS = {
+    56: "0x3d077c05c3AbCE52257E453607209f81D9db01fC",
+    97: "0x89D20aB13D093Eecea6C5af0a22566d4e780892A",
+    137: "0x3d077c05c3AbCE52257E453607209f81D9db01fC"
+}
+var INIT_CODE_HASH = {
+    56: "0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8",
+    97: "0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8",
+    137: "0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8"
+}
 var MINIMUM_LIQUIDITY = /*#__PURE__*/ JSBI.BigInt(1000) // exports for internal consumption
 
 var ZERO = /*#__PURE__*/ JSBI.BigInt(0)

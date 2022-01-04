@@ -23,7 +23,7 @@ var ChainId
   ChainId[(ChainId['BSC_MAINNET'] = 56)] = 'BSC_MAINNET'
   ChainId[(ChainId['BSC_TESTNET'] = 97)] = 'BSC_TESTNET'
   ChainId[(ChainId['POLYGON_MAINNET'] = 137)] = 'POLYGON_MAINNET'
-  ChainId[(ChainId['POLYGON_TESTNET'] = 137)] = 'POLYGON_TESTNET'
+  ChainId[(ChainId['POLYGON_TESTNET'] = 80001)] = 'POLYGON_TESTNET'
 })(ChainId || (ChainId = {}))
 
 var TradeType
@@ -556,15 +556,15 @@ var WETH =
   )),
   (_WETH[ChainId.POLYGON_MAINNET] = /*#__PURE__*/ new Token(
     ChainId.POLYGON_MAINNET,
-    '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-    137,
+    '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+    18,
     'WETH',
     'Wrapped Ether'
   )),
   (_WETH[ChainId.POLYGON_TESTNET] = /*#__PURE__*/ new Token(
     ChainId.POLYGON_TESTNET,
     '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
-    137,
+    18,
     'WETH',
     'Wrapped Ether'
   )),

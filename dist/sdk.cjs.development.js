@@ -26,9 +26,10 @@ var _SOLIDITY_TYPE_MAXIMA
   ChainId[(ChainId['RINKEBY'] = 4)] = 'RINKEBY'
   ChainId[(ChainId['G\xD6RLI'] = 5)] = 'G\xD6RLI'
   ChainId[(ChainId['KOVAN'] = 42)] = 'KOVAN'
-  ChainId[(ChainId['BSC_MAIN_NET'] = 56)] = 'BSC_MAIN_NET'
-  ChainId[(ChainId['BSC_TEST_NET'] = 97)] = 'BSC_TEST_NET'
-  ChainId[(ChainId['POLYGON'] = 137)] = 'POLYGON'
+  ChainId[(ChainId['BSC_MAINNET'] = 56)] = 'BSC_MAINNET'
+  ChainId[(ChainId['BSC_TESTNET'] = 97)] = 'BSC_TESTNET'
+  ChainId[(ChainId['POLYGON_MAINNET'] = 137)] = 'POLYGON_MAINNET'
+  ChainId[(ChainId['POLYGON_TESTNET'] = 80001)] = 'POLYGON_TESTNET'
 })(exports.ChainId || (exports.ChainId = {}))
 ;(function (TradeType) {
   TradeType[(TradeType['EXACT_INPUT'] = 0)] = 'EXACT_INPUT'
@@ -543,6 +544,20 @@ var WETH =
   (_WETH[exports.ChainId.BSC_TESTNET] = /*#__PURE__*/ new Token(
     exports.ChainId.BSC_TESTNET,
     '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd',
+    18,
+    'WETH',
+    'Wrapped Ether'
+  )),
+  (_WETH[exports.ChainId.POLYGON_MAINNET] = /*#__PURE__*/ new Token(
+    exports.ChainId.POLYGON_MAINNET,
+    '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+    18,
+    'WETH',
+    'Wrapped Ether'
+  )),
+  (_WETH[exports.ChainId.POLYGON_TESTNET] = /*#__PURE__*/ new Token(
+    exports.ChainId.POLYGON_TESTNET,
+    '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
     18,
     'WETH',
     'Wrapped Ether'

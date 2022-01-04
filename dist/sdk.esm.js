@@ -20,9 +20,10 @@ var ChainId
   ChainId[(ChainId['RINKEBY'] = 4)] = 'RINKEBY'
   ChainId[(ChainId['G\xD6RLI'] = 5)] = 'G\xD6RLI'
   ChainId[(ChainId['KOVAN'] = 42)] = 'KOVAN'
-  ChainId[(ChainId['BSC_MAIN_NET'] = 56)] = 'BSC_MAIN_NET'
-  ChainId[(ChainId['BSC_TEST_NET'] = 97)] = 'BSC_TEST_NET'
-  ChainId[(ChainId['POLYGON'] = 137)] = 'POLYGON'
+  ChainId[(ChainId['BSC_MAINNET'] = 56)] = 'BSC_MAINNET'
+  ChainId[(ChainId['BSC_TESTNET'] = 97)] = 'BSC_TESTNET'
+  ChainId[(ChainId['POLYGON_MAINNET'] = 137)] = 'POLYGON_MAINNET'
+  ChainId[(ChainId['POLYGON_TESTNET'] = 137)] = 'POLYGON_TESTNET'
 })(ChainId || (ChainId = {}))
 
 var TradeType
@@ -41,12 +42,14 @@ var Rounding
 var FACTORY_ADDRESS = {
     56: "0x3d077c05c3AbCE52257E453607209f81D9db01fC",
     97: "0x89D20aB13D093Eecea6C5af0a22566d4e780892A",
-    137: "0x3d077c05c3AbCE52257E453607209f81D9db01fC"
+    137: "0x3d077c05c3AbCE52257E453607209f81D9db01fC",
+    80001: "0x5cfc3885d58BfDa0B9F0A9709E414Fd345985AA0"
 }
 var INIT_CODE_HASH = {
     56: "0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8",
     97: "0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8",
-    137: "0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8"
+    137: "0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8",
+    80001: "0xfbf3b88d6f337be529b00f1dc9bff44bb43fa3c6b5b7d58a2149e59ac5e0c4a8"
 }
 var MINIMUM_LIQUIDITY = /*#__PURE__*/ JSBI.BigInt(1000) // exports for internal consumption
 
@@ -537,23 +540,30 @@ var WETH =
     'WETH',
     'Wrapped Ether'
   )),
-  (_WETH[ChainId.BSC_MAIN_NET] = /*#__PURE__*/ new Token(
-    ChainId.BSC_MAIN_NET,
+  (_WETH[ChainId.BSC_MAINNET] = /*#__PURE__*/ new Token(
+    ChainId.BSC_MAINNET,
     '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
     18,
     'WETH',
     'Wrapped Ether'
   )),
-  (_WETH[ChainId.BSC_TEST_NET] = /*#__PURE__*/ new Token(
-    ChainId.BSC_TEST_NET,
+  (_WETH[ChainId.BSC_TESTNET] = /*#__PURE__*/ new Token(
+    ChainId.BSC_TESTNET,
     '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd',
     18,
     'WETH',
     'Wrapped Ether'
   )),
-  (_WETH[ChainId.POLYGON] = /*#__PURE__*/ new Token(
-    ChainId.POLYGON,
+  (_WETH[ChainId.POLYGON_MAINNET] = /*#__PURE__*/ new Token(
+    ChainId.POLYGON_MAINNET,
     '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
+    137,
+    'WETH',
+    'Wrapped Ether'
+  )),
+  (_WETH[ChainId.POLYGON_TESTNET] = /*#__PURE__*/ new Token(
+    ChainId.POLYGON_TESTNET,
+    '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
     137,
     'WETH',
     'Wrapped Ether'
